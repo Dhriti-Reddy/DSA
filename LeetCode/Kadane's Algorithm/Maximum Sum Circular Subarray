@@ -1,0 +1,24 @@
+class Solution {
+    public int maxSubarraySumCircular(int[] nums) {
+        int totalsum = nums[0];
+        int bestEndingHere = nums[0];
+        int bestOverall = nums[0];
+        int invBestEndingHere = -nums[0];
+        int invBestOverall = -nums[0];
+        int maxEle = nums[0];
+        for(int i=1; i<nums.length; i++){
+            maxEle = Math.max(maxEle, nums[i]);
+            totalsum += nums[i];
+            bestEndingHere = Math.max(bestEndingHere + nums[i], nums[i]);
+            bestOverall = Math.max(bestEndingHere, bestOverall);
+            invBestEndingHere = Math.max(invBestEndingHere + (-nums[i]), -nums[i]);
+            invBestOverall = Math.max(invBestEndingHere, invBestOverall);   
+        }
+        if(maxEle < 0){
+            return maxEle;
+        }
+        else{
+            return Math.max(totalsum + invBestOverall, bestOverall);
+        }
+    }
+}
