@@ -1,0 +1,22 @@
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int rows = word1.length();
+        int cols = word2.length();
+        int[][] dp = new int[rows+1][cols+1];
+        //dp[0][0] = 0 is alr initialised by java so no need to write it.
+        for(int i=0; i<=rows; i++){
+            for(int j=0; j<=cols; j++){
+                if(i == 0) dp[i][j] = j;//if word1 is empty
+                else if(j == 0) dp[i][j] = i;//if word2 is empty
+                else if(word1.charAt(i-1) == word2.charAt(j-1)) dp[i][j] = dp[i-1][j-1];
+                else{
+                    dp[i][j] = Math.min(dp[i-1][j-1]+1, Math.min(dp[i-1][j]+1, dp[i][j-1]+1));
+                }
+            }
+        }
+        return dp[rows][cols];
+        //Delete: you take away a letter from i but leave all of j intact → delete = dp[i-1][j] + 1
+        //Insert: you leave all of i intact but take away a letter from j → insert = dp[i][j-1] + 1
+        //Replace: you take away one letter from both i and j because you replace one with the other → replace = dp[i-1][j-1] + 1
+    }
+}
