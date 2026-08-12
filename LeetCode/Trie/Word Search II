@@ -1,0 +1,53 @@
+class Solution {
+    class TrieNode {
+        TrieNode[] children = new TrieNode[26];
+        String word;
+    }
+
+    void insert(TrieNode root, String word) {
+        TrieNode curr = root;
+        for(int i = 0; i < word.length(); i++) {
+            int index = word.charAt(i) - 'a';
+            if(curr.children[index] == null) {
+                curr.children[index] = new TrieNode();
+            }
+            curr = curr.children[index];
+        }
+        curr.word = word;
+    }
+
+    public List<String> findWords(char[][] board, String[] words) {
+        TrieNode root = new TrieNode();
+        for(String word : words){
+            insert(root, word);
+        }
+        List<String> result = new ArrayList<>();
+        for(int r = 0; r < board.length; r++){
+            for(int c = 0; c < board[0].length; c++){
+                backtrack(board, root, r, c, result);
+            }
+        }
+        return result;
+    }
+
+    void backtrack(char[][] board, TrieNode node, int r, int c, List<String> result){
+        if (r < 0 || r >= board.length || c < 0 || c >= board[0].length) return;
+        if(board[r][c] == '#') return;
+        int index = board[r][c] - 'a';
+        if(node.children[index] == null) return;
+        node = node.children[index];
+        if(node.word != null){
+            result.add(node.word);
+            node.word = null;
+        }
+
+        char temp = board[r][c];
+        board[r][c] = '#';
+        backtrack(board, node, r - 1, c, result); // UP
+        backtrack(board, node, r + 1, c, result); // DOWN
+        backtrack(board, node, r, c - 1, result); // LEFT
+        backtrack(board, node, r, c + 1, result); // RIGHT
+        board[r][c] = temp;
+        return;
+    }
+}
