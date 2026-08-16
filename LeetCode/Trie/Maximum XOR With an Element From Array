@@ -1,0 +1,51 @@
+class Solution {
+    class Node {
+        Node[] next = new Node[2];
+    }
+    Node root = new Node();
+
+    void add(int n) {
+        Node cur = root;
+        for (int i = 30; i >= 0; i--) {
+            int b = (n >> i) & 1;
+            if (cur.next[b] == null)
+                cur.next[b] = new Node();
+            cur = cur.next[b];
+        }
+    }
+
+    int find(int n) {
+        Node cur = root;
+        int ans = 0;
+        for (int i = 30; i >= 0; i--) {
+            int b = (n >> i) & 1;
+            int opp = 1 - b;
+            if (cur.next[opp] != null) {
+                ans |= 1 << i;
+                cur = cur.next[opp];
+            } else {
+                cur = cur.next[b];
+            }
+        }
+        return ans;
+    }
+    
+    public int[] maximizeXor(int[] nums, int[][] queries) {
+        Arrays.sort(nums);
+        int[][] q = new int[queries.length][3];
+        for (int i = 0; i < q.length; i++) {
+            q[i][0] = queries[i][0];
+            q[i][1] = queries[i][1];
+            q[i][2] = i;
+        }
+        Arrays.sort(q, (a, b) -> a[1] - b[1]);
+        int[] ans = new int[q.length];
+        int j = 0;
+        for (int[] query : q) {
+            while (j < nums.length && nums[j] <= query[1])
+                add(nums[j++]);
+            ans[query[2]] = j == 0 ? -1 : find(query[0]);
+        }
+        return ans;
+    }
+}
