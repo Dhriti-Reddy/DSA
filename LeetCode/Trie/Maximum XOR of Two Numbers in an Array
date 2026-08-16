@@ -1,0 +1,21 @@
+class Solution {
+    public int findMaximumXOR(int[] nums) {
+        int maxXor = 0;
+        for (int i = 30; i >= 0; i--) {
+            HashSet<Integer> set = new HashSet<>();
+            for (int num : nums) {
+                int prefix = num >> i;
+                set.add(prefix);
+            }
+            int candidate = maxXor | (1 << i);
+            for (int prefix : set) {
+                int required = prefix ^ (candidate >> i);
+                if (set.contains(required)) {
+                    maxXor = candidate;
+                    break;
+                }
+            }
+        }
+        return maxXor;
+    }
+}
