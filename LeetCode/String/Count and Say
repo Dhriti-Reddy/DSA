@@ -1,0 +1,19 @@
+class Solution {
+    public String countAndSay(int n) {
+        String current = "1";
+        for(int i=2; i<=n; i++){
+            StringBuilder next = new StringBuilder();
+            for(int j=0; j<current.length(); j++){
+                int count = 1;
+                while(j + 1 <current.length() && current.charAt(j) == current.charAt(j+1)){
+                    count++;
+                    j++;
+                }
+                next.append(count);
+                next.append(current.charAt(j));
+            }
+            current = next.toString();
+        }
+        return current;
+    }
+}
