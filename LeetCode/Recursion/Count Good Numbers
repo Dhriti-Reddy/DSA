@@ -1,0 +1,26 @@
+class Solution {
+    static final long MOD = 1000000007;
+    public int countGoodNumbers(long n) {
+        long even = (n + 1) / 2;
+        long odd = n / 2;
+        long ans = power(5, even) * power(4, odd) % MOD;
+        return (int)ans;
+    }
+
+    public long power(long base, long exponent){
+        if(exponent == 0) return 1;// anything power 0 is 1
+        long half = power(base, exponent / 2);// divide the power into half
+        if(exponent % 2 == 0) return half * half % MOD;// if power is even, just do 5^8 = 5^4 * 5^4 * MOD
+        return base * half % MOD * half % MOD;// if odd then, 5^5 = 5*5^2*5^2 n MOD
+    }
+
+    /*public int recursion(long n){
+        int count = 1;
+        if(n == 0) return 1;
+        if(n == 1) return 5;
+        if(n % 2 == 0) count = (int)(20L * recursion(n-2) % 1000000007);
+        if(n % 2 != 0) count = (int)(100L * recursion(n-3) % 1000000007);
+        return count;
+    }*/
+    //this doesnt work cuz for big numbers, stack overflows so u need exponentiation by squaring
+}
