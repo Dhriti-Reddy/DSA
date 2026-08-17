@@ -1,0 +1,45 @@
+class Solution { 
+    public void solveSudoku(char[][] board) { 
+        backtrack(0, 0, board); 
+    } 
+ 
+    public boolean backtrack(int row, int col, char[][] board){ 
+        if(col == board[0].length){//if this col for this row is filled 
+            return backtrack(row+1, 0, board); 
+        } 
+        if(row == board.length){//if all rows are filled 
+            return true; 
+        } 
+        if (board[row][col] != '.') {//if this cell is filled go to next cell 
+            return backtrack(row, col + 1, board); 
+        } 
+        for(int num = 1; num<=9; num++){ 
+            if(isValid(row, col, num, board)){ 
+                board[row][col] = (char)(num + '0');//add the number 
+                if(backtrack(row, col+1, board)){//we stay on same row but move to next col 
+                    return true;//check if its valid via backtracking thru the rest 
+                } 
+                board[row][col] = '.';//change back 
+            } 
+        } 
+        return false; 
+    } 
+ 
+    public boolean isValid(int row, int col, int num, char[][] board){ 
+        for (int j = 0; j < 9; j++) {//check the row 
+            if (board[row][j] == num + '0') return false; 
+        } 
+        for (int i = 0; i < 9; i++) {//check the col 
+            if (board[i][col] == num + '0') return false; 
+        } 
+        int boxRow = (row / 3) * 3; 
+        int boxCol = (col / 3) * 3; 
+        for (int i = boxRow; i < boxRow + 3; i++) { 
+            for (int j = boxCol; j < boxCol + 3; j++) { 
+                if (board[i][j] == num + '0') 
+                    return false; 
+            } 
+        } 
+        return true; 
+    } 
+}
