@@ -1,0 +1,24 @@
+class Solution {
+    public int divide(int dividend, int divisor) {
+        // Only overflow case
+        if (dividend == Integer.MIN_VALUE && divisor == -1) {
+            return Integer.MAX_VALUE;
+        }
+        boolean negative = (dividend < 0) ^ (divisor < 0);
+        long a = Math.abs((long) dividend);
+        long b = Math.abs((long) divisor);
+        int quotient = 0;
+        while (a >= b) {
+            int k = 0;
+            while (b << (k + 1) <= a) {
+                k++;
+            } //increase k till appropriate value;
+            a -= b << k;//do dividend minus that whole value
+            quotient += 1 << k; //find out the quotient
+        }
+        if (negative) {
+            quotient = -quotient;
+        }
+        return quotient;
+    }
+}
