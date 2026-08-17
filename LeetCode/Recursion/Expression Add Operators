@@ -1,0 +1,29 @@
+class Solution {
+    public List<String> addOperators(String num, int target) {
+        List<String> ans = new ArrayList<>();
+        backtrack(num, target, 0, 0, 0, "", ans);
+        return ans;
+    }
+
+    public void backtrack(String num, int target, int index, long value, long prev, String exp, List<String> ans){
+        if(index == num.length()){
+            if(value == target){
+                ans.add(exp);
+            }
+            return;
+        }
+        long current = 0;
+        for(int i=index; i<num.length(); i++){
+            current = current * 10 + (num.charAt(i) - '0');
+            if(i > index && num.charAt(index) == '0') break;
+            if(index != 0){
+                backtrack(num, target, i + 1, value + current, current, exp + "+" + current, ans);
+                backtrack(num, target, i + 1, value - current, -current, exp + "-" + current, ans);
+                backtrack(num, target, i + 1, value - prev + prev * current, prev * current, exp + "*" + current, ans);
+            }
+            else {
+                backtrack(num, target, i + 1, current, current, "" + current, ans);
+            }
+        }
+    }
+}
