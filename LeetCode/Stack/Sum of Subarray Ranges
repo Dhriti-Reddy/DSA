@@ -1,0 +1,29 @@
+class Solution {
+    public long subArrayRanges(int[] arr) {
+        int n = arr.length;
+        long ans = 0;
+        Stack<Integer> s = new Stack<>();
+        // Minimum contributions
+        for(int i = 0; i <= n; i++){
+            while(!s.isEmpty() && (i == n || arr[s.peek()] > arr[i])){
+                int j = s.pop();
+                int left = s.isEmpty() ? j + 1 : j - s.peek();
+                int right = i - j;
+                ans -= (long) arr[j] * left * right;
+            }
+            if(i < n) s.push(i);
+        }
+
+        // Maximum contributions
+        for(int i = 0; i <= n; i++){
+            while(!s.isEmpty() && (i == n || arr[s.peek()] < arr[i])){
+                int j = s.pop();
+                int left = s.isEmpty() ? j + 1 : j - s.peek();
+                int right = i - j;
+                ans += (long) arr[j] * left * right;
+            }
+            if(i < n) s.push(i);
+        }
+        return ans;
+    }
+}
