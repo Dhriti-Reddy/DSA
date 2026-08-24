@@ -1,0 +1,70 @@
+class Solution {
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        List<List<String>> result = new ArrayList<>();
+        Set<String> wordSet = new HashSet<>(wordList);
+        if (!wordSet.contains(endWord)) {
+            return result;
+        }
+        Map<String, List<String>> parents = new HashMap<>();
+        Queue<String> q = new LinkedList<>();
+        q.offer(beginWord);
+        Set<String> visited = new HashSet<>();
+        visited.add(beginWord);
+        boolean found = false;
+        while (!q.isEmpty() && !found) {
+            int size = q.size();
+            Set<String> levelVisited = new HashSet<>();
+            for (int i = 0; i < size; i++) {
+                String word = q.poll();
+                char[] chars = word.toCharArray();
+                for (int j = 0; j < chars.length; j++) {
+                    char original = chars[j];
+                    for (char ch = 'a'; ch <= 'z'; ch++) {
+                        if (ch == original) {
+                            continue;
+                        }
+                        chars[j] = ch;
+                        String nextWord = new String(chars);
+                        if (!wordSet.contains(nextWord)) {
+                            continue;
+                        }
+                        if (!visited.contains(nextWord) && !levelVisited.contains(nextWord)) {
+                            q.offer(nextWord);
+                            levelVisited.add(nextWord);
+                            parents.putIfAbsent(nextWord, new ArrayList<>());
+                            parents.get(nextWord).add(word);
+                            if (nextWord.equals(endWord)) {
+                                found = true;
+                            }
+                        }
+                        else if (levelVisited.contains(nextWord)) {
+                            parents.get(nextWord).add(word);
+                        }
+                    }
+                    chars[j] = original;
+                }
+            }
+            visited.addAll(levelVisited);
+        }
+        if (!found) {
+            return result;
+        }
+        List<String> path = new ArrayList<>();
+        path.add(endWord);
+        buildPaths(endWord, beginWord, parents, path, result);
+        return result;
+    }
+    private void buildPaths(String word, String beginWord, Map<String, List<String>> parents, List<String> path, List<List<String>> result) {
+        if (word.equals(beginWord)) {
+            List<String> current = new ArrayList<>(path);
+            Collections.reverse(current);
+            result.add(current);
+            return;
+        }
+        for (String parent : parents.get(word)) {
+            path.add(parent);
+            buildPaths(parent, beginWord, parents, path, result);
+            path.remove(path.size() - 1);
+        }
+    }
+}
