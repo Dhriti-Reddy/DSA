@@ -1,0 +1,53 @@
+class Solution {
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        Map<TreeNode, TreeNode> pmap = new HashMap<>();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        // Build parent map
+        while (!q.isEmpty()) {
+            TreeNode node = q.poll();
+            if (node.left != null) {
+                pmap.put(node.left, node);
+                q.add(node.left);
+            }
+            if (node.right != null) {
+                pmap.put(node.right, node);
+                q.add(node.right);
+            }
+        }
+        // BFS from target
+        Queue<TreeNode> q2 = new LinkedList<>();
+        Set<TreeNode> visited = new HashSet<>();
+        q2.add(target);
+        visited.add(target);
+        int distance = 0;
+        while (!q2.isEmpty()) {
+            if (distance == k) {
+                List<Integer> result = new ArrayList<>();
+                while (!q2.isEmpty()) {
+                    result.add(q2.poll().val);
+                }
+                return result;
+            }
+            int size = q2.size();
+            for (int i = 0; i < size; i++) {
+                TreeNode node = q2.poll();
+                if (node.left != null && visited.add(node.left)) {
+                    q2.add(node.left);
+                }
+                if (node.right != null && visited.add(node.right)) {
+                    q2.add(node.right);
+                }
+                TreeNode parent = pmap.get(node);
+                if (parent != null && visited.add(parent)) {
+                    q2.add(parent);
+                }
+            }
+            distance++;
+        }
+        return new ArrayList<>();
+    }
+}
