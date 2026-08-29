@@ -1,0 +1,35 @@
+class Solution {
+    public int maximalRectangle(char[][] matrix) {
+        int rows = matrix.length;
+        int cols = matrix[0].length;
+        int[] heights = new int[cols];
+        int max = 0;
+        for (int i = 0; i < rows; i++) {
+            // Build histogram for this row
+            for (int j = 0; j < cols; j++) {
+                if (matrix[i][j] == '1') {
+                    heights[j]++;
+                } else {
+                    heights[j] = 0;
+                }
+            }
+            // Apply Largest Rectangle in Histogram
+            Stack<Integer> stack = new Stack<>();
+            for (int j = 0; j <= cols; j++) {
+                int curr = (j == cols) ? 0 : heights[j];
+                while (!stack.isEmpty() && heights[stack.peek()] > curr) {
+                    int h = heights[stack.pop()];
+                    int width;
+                    if (stack.isEmpty()) {
+                        width = j;
+                    } else {
+                        width = j - stack.peek() - 1;
+                    }
+                    max = Math.max(max, h * width);
+                }
+                stack.push(j);
+            }
+        }
+        return max;
+    }
+}
