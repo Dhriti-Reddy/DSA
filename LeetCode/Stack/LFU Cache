@@ -1,0 +1,86 @@
+class LFUCache {
+    class Node {
+        int key, value, freq;
+        Node prev, next;
+        Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+            freq = 1;
+        }
+    }
+
+    class DLL {
+        Node head = new Node(0, 0);
+        Node tail = new Node(0, 0);
+        DLL() {
+            head.next = tail;
+            tail.prev = head;
+        }
+        void add(Node node) {
+            node.next = head.next;
+            node.prev = head;
+            head.next.prev = node;
+            head.next = node;
+        }
+        void remove(Node node) {
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+        }
+        Node removeLast() {
+            Node node = tail.prev;
+            remove(node);
+            return node;
+        }
+        boolean isEmpty() {
+            return head.next == tail;
+        }
+    }
+    int capacity;
+    int minFreq;
+    HashMap<Integer, Node> nodes = new HashMap<>();
+    HashMap<Integer, DLL> freq = new HashMap<>();
+    public LFUCache(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public int get(int key) {
+
+        if (!nodes.containsKey(key))
+            return -1;
+        Node node = nodes.get(key);
+        increaseFreq(node);
+        return node.value;
+    }
+
+    public void put(int key, int value) {
+        if (capacity == 0)
+            return;
+        if (nodes.containsKey(key)) {
+            Node node = nodes.get(key);
+            node.value = value;
+            increaseFreq(node);
+            return;
+        }
+        if (nodes.size() == capacity) {
+            DLL list = freq.get(minFreq);
+            Node removed = list.removeLast();
+            nodes.remove(removed.key);
+        }
+        Node node = new Node(key, value);
+        nodes.put(key, node);
+        freq.putIfAbsent(1, new DLL());
+        freq.get(1).add(node);
+        minFreq = 1;
+    }
+
+    void increaseFreq(Node node) {
+        int oldFreq = node.freq;
+        DLL oldList = freq.get(oldFreq);
+        oldList.remove(node);
+        if (oldFreq == minFreq && oldList.isEmpty())
+            minFreq++;
+        node.freq++;
+        freq.putIfAbsent(node.freq, new DLL());
+        freq.get(node.freq).add(node);
+    }
+}
