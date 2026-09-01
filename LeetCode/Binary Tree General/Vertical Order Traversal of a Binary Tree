@@ -1,0 +1,38 @@
+class Solution {
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        List<Pair> nodes = new ArrayList<>();
+        dfs(root, 0, 0, nodes);
+        Collections.sort(nodes, (a, b) -> {
+            if(a.col != b.col) return a.col - b.col;
+            if(a.row != b.row) return a.row - b.row;
+            return a.val - b.val;
+        });
+        List<List<Integer>> ans = new ArrayList<>();
+        int prevcol = Integer.MIN_VALUE;
+        for(Pair p : nodes){
+            if(p.col != prevcol){
+                ans.add(new ArrayList<>());
+                prevcol = p.col;
+            }
+            ans.get(ans.size() - 1).add(p.val);
+        }
+        return ans;
+    }
+    class Pair {
+        int val;
+        int row;
+        int col;
+
+        Pair(int val, int row, int col) {
+            this.val = val;
+            this.row = row;
+            this.col = col;
+        }
+    }
+    void dfs(TreeNode root, int row, int col, List<Pair> nodes) {
+        if (root == null) return;
+        nodes.add(new Pair(root.val, row, col));
+        dfs(root.left, row + 1, col - 1, nodes);
+        dfs(root.right, row + 1, col + 1, nodes);
+    }
+}
